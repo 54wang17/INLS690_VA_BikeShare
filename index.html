@@ -1,0 +1,161 @@
+<html>
+
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.css" />
+<script src="./js/jquery-1.11.1.js"></script>
+<script src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
+<script src="http://ils.unc.edu/~gotz/courses/js/d3.v3.min.js"></script>
+<script src="./js/RefineData.js"></script>
+<!-- <script src="test.js"></script> -->
+<style>
+#map { height: 680px; width: 600px;}
+</style>
+<body>
+<div id = "filter">
+	<form id= "DateRange">
+		<p id= 'error'></p>
+		<p>From:</p>
+		<select class='day' id= 'f_day'></select>
+		<select class='month' id= 'f_month'></select>
+		<select class='year' id= 'f_year'></select>
+		<p>To:</p>
+		<select class='day' id= 't_day'></select>
+		<select class='month' id= 't_month'></select>
+		<select class='year' id= 't_year'></select>
+		<button id='DateQuery'type="submit" >Submit</button>
+	</form>
+	
+	<select id='FlowDir'>
+  		<option value="to">In</option>
+  		<option value="from">Out</option>
+	</select>
+</div> 
+
+
+<div id = "map"></div>
+<script>
+// var links = {"objects":[
+//     {"link":{"start" :[40.76727216, -73.99392888],"end":[40.71911552, -74.00666661]}}
+//   ]}
+
+
+// initialize map
+var map = L.map('map').setView([41.87395806,-87.62773949], 13);
+L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: '54wang17.cienhr5jj0dr8s2m2uf9l4qf0',
+    accessToken: 'pk.eyJ1IjoiNTR3YW5nMTciLCJhIjoiY2llbmhyNXZtMGRyY3M2bTNsanRnbmRkaCJ9.fENzrbnGuc1TzxKSNBQtPQ'
+}).addTo(map);
+
+map._initPathRoot()  
+var svg = d3.select("#map").select("svg"),
+  	g = svg.append("g");
+
+
+// d3.json("./stations.json", function(collection) {
+function renderStation(collection){
+
+	collection.forEach(function(d) {
+      d.LatLng = new L.LatLng(d.latitude,
+                  d.longitude);
+    })
+
+
+	var feature = g.selectAll("circle")
+	      .data(collection)
+	      .enter().append("circle")
+	      .style("stroke", "black")  
+	      .style("opacity", .6) 
+	      .style("fill", "red")
+	      .attr("r", function(d){return (3.0*(d.inflow+d.outflow))/3000;})
+	      .on('click',function(d){
+	      		var e= document.getElementById("FlowDir");
+	      		var flow_dir = e.options[e.selectedIndex].value;
+	      		getTrip(flow_dir,d.station_id)
+	      });  
+
+	map.on("viewreset", update);
+	update();
+
+	function update() {
+	  feature.attr("transform", 
+		  function(d) { 
+		    return "translate("+ 
+		      map.latLngToLayerPoint(d.LatLng).x +","+ 
+		      map.latLngToLayerPoint(d.LatLng).y +")";
+		    })	
+	 	.attr("r", function(d){
+	      	var change_ratio = map.getZoom()/6;
+	      	return 3*(d.inflow+d.outflow)/3000*change_ratio;}); 
+	}
+	console.log(map.getZoom());
+}
+
+function getTrip(dir,s_id){
+	$.ajax("./controller.php/trip/"+dir+"/"+s_id,
+	      		{   type: "GET",
+		      		 dataType: "json",
+		      		 success: function(return_obj, status, jqXHR) {
+		      			console.log(return_obj.length);
+		      			renderTrip(return_obj);
+		   		}
+				});
+
+}
+
+function renderTrip(collection){
+
+	console.log("In renderTrip");
+	collection.forEach(function(d) {
+	      d.SLatLng = new L.LatLng(d.from_latitude,
+	                  d.from_longitude);
+	      d.ELatLng = new L.LatLng(d.to_latitude,
+	                  d.to_longitude);
+	    });
+
+	map.on("viewreset", Linkupdate);
+
+	// console.log(g.selectAll("circle"));
+	Linkupdate();
+
+	function Linkupdate() {
+		console.log("Linkupdate Called.")
+	  	
+	  	var inbound_trip = collection.filter(function(d){
+			f_node = map.getBounds().contains(new L.LatLng(d.from_latitude, d.from_longitude));
+			t_node = map.getBounds().contains(new L.LatLng(d.to_latitude, d.to_longitude));
+			// console.log(f_node && t_node);
+			return f_node && t_node;
+		});
+		console.log(inbound_trip.length);
+
+	  	var line_link = g.selectAll("line.link")
+	      				.data(inbound_trip,function(d) { return d.trip_id;});
+
+	    line_link.enter().append("line")
+	      .attr("width", 20)
+	      .style("stroke","black")
+	      .style("stroke-width","2px")
+	      .attr("class","link")
+	      .attr("x1",function(d){return map.latLngToLayerPoint(d.SLatLng).x;})
+	      .attr("y1",function(d){return map.latLngToLayerPoint(d.SLatLng).y;})
+	      .attr("x2",function(d){return map.latLngToLayerPoint(d.ELatLng).x;})
+	      .attr("y2",function(d){return map.latLngToLayerPoint(d.ELatLng).y;});
+
+		line_link
+	      .attr("x1",function(d){return map.latLngToLayerPoint(d.SLatLng).x;})
+	      .attr("y1",function(d){return map.latLngToLayerPoint(d.SLatLng).y;})
+	      .attr("x2",function(d){return map.latLngToLayerPoint(d.ELatLng).x;})
+	      .attr("y2",function(d){return map.latLngToLayerPoint(d.ELatLng).y;});
+
+	   	line_link.exit().remove();
+
+	}
+	
+}
+
+// });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<html>
+<script src="http://ils.unc.edu/~gotz/courses/js/d3.v3.min.js"></script>
+<script src="http://ils.unc.edu/~gotz/courses/js/simple_statistics.js"></script>
+<style>
+.left_area {
+border: 1px solid black;
+height: 800px;
+float: left;
+width: 30%;
+}
+
+.right_area {
+border: 1px solid red;
+height: 800px;
+float: right;
+width: 65%;
+
+}
+.map {
+height: 500px;
+}
+.map_info {
+border: 1px solid green;
+height: 300px;
+}
+.left_map_info {
+border: 1px solid blue;
+height: 250px;
+float: left;
+width: 45%;
+}
+.right_map_info {
+border: 1px solid orange;
+height: 250px;
+float: right;
+width: 45%;
+}
+
+.top_bottom_labels {
+padding-left: 5px;
+}
+
+.in_out_map_labels {
+padding-left: 5px;
+}
+</style>
+
+
+
+<body>
+
+<h2>Divvy Station Rankings by Number of Trips</h2>
+
+<div class="left_area">
+	<div id="top_bottom_50"></div>
+	<div id="rankings_list"></div>
+</div>
+
+<div class="right_area">
+	<div class="map"></div>
+	<div class="map_info">
+		<div class="left_map_info">
+			<div class="in_out_select"></div>
+		</div>
+		<div class="right_map_info"></div>
+	</div>
+</div>
+
+</body>
+<script>
+//http://stackoverflow.com/questions/26499844/dynamically-create-radio-buttons-using-d3-js
+var top_bottom_rankings_data = ["Top 50", "Bottom 50"], j=0;
+var top_bottom_form = d3.select("#top_bottom_50").append("form");
+
+ranking_labels = top_bottom_form.selectAll(".ranking_labels")
+.data(top_bottom_rankings_data)
+.enter()
+.append("label")
+.attr("class", "top_bottom_labels")
+.text(function(d) {return d;})
+.insert("input")
+.attr({type: "radio", class: "shape", name: "ranking_select", value: function(d, i) {return i;}
+})
+.property("checked", function(d, i) {return i===j;});
+
+
+var in_out_map_data = ["Incoming", "Outgoing", "All"], j=2;
+var in_out_map_form = d3.select(".in_out_select").append("form");
+
+in_out_map_labels = in_out_map_form.selectAll(".in_out_map_labels")
+.data(in_out_map_data)
+.enter()
+.append("label")
+.attr("class", "in_out_map_labels")
+.text(function(d) {return d;})
+.insert("input")
+.attr({type: "radio", class: "shape", name: "ranking_select", value: function(d, i) {return i;}
+})
+.property("checked", function(d, i) {return i===j;});
+
+</script>
+</html>

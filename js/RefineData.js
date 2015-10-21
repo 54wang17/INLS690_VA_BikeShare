@@ -66,7 +66,7 @@ var submit_date_query = function () {
 		}else{
 			console.log(from_date+':'+to_date);	
 			$.ajax({
-				url: "./controller.php/station/"+rank+"/50/"+weight+"/"+from_date+"-01/"+to_date+"-31", 
+				url: "./controller.php/station/"+rank+"/50/"+weight+"/"+from_date+"/"+to_date, 
 				type: "GET",
 				datatype: "JSON",
 	            success: function(return_obj, status, jqXHR){

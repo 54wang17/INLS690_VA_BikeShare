@@ -24,33 +24,49 @@ class Trip
       $date_sql = '';
     } else{
       if ($date1 == ''){
-        $date1 = '2013-01-01';
+        $date1 = '2013-01';
       }else if ($date2 == ''){
-        $date2 = date('Y-m-d');
+        $date2 = date('Y-m');
       }
-      $date_sql = "where starttime >= '".$date1."' and starttime <= '".$date2."'";
+      $date_sql = "where triptime >= '".$date1."' and triptime <= '".$date2."'";
     }
     $db_info = parse_ini_file("db.ini");
     $mysqli = new mysqli($db_info["server"], $db_info["username"],$db_info["password"],$db_info["dbname"]);
 
-    $sql_query = "select from_station_id, longitude As from_longitude, latitude AS from_latitude,
-                                      to_station_id, to_longitude, to_latitude, flow, trip_id
-                              from station AS S2
-                              RIGHT JOIN
-                                (select to_station_id, longitude As to_longitude, latitude AS to_latitude, from_station_id, flow, trip_id
-                                from station AS S1
-                                RIGHT JOIN
-                                  (select trip_id, from_station_id, to_station_id, count(*) AS flow from trip"
-                                  .$date_sql.
-                                    " group by from_station_id,to_station_id
-                                    ORDER BY flow ".$order_sql." LIMIT ".$n." ) AS IO
-                                ON IO.to_station_id = S1.station_id) AS TMP
-                              ON TMP.from_station_id = S2.station_id;";
+    // $sql_query = "select from_station_id, longitude As from_longitude, latitude AS from_latitude,
+    //                                   to_station_id, to_longitude, to_latitude, flow, trip_id
+    //                           from station AS S2
+    //                           RIGHT JOIN
+    //                             (select to_station_id, longitude As to_longitude, latitude AS to_latitude, from_station_id, flow, trip_id
+    //                             from station AS S1
+    //                             RIGHT JOIN
+    //                               (select trip_id, from_station_id, to_station_id, count(*) AS flow from trip"
+    //                               .$date_sql.
+    //                                 " group by from_station_id,to_station_id
+    //                                 ORDER BY flow ".$order_sql." LIMIT ".$n." ) AS IO
+    //                             ON IO.to_station_id = S1.station_id) AS TMP
+    //                           ON TMP.from_station_id = S2.station_id;";
+    $sql_query = "select from_station_id, F.longitude AS from_longitude, F.latitude AS from_latitude,
+                      to_station_id, T.longitude AS to_longitude, T.latitude AS to_latitude, flow
+                  from 
+                    station AS F
+                  RIGHT JOIN
+                    (select from_station_id,to_station_id,sum(flow) as flow 
+                      FROM sum_trip
+                      ".$date_sql." 
+                      GROUP BY from_station_id,to_station_id 
+                      ORDER BY flow ".$order_sql." limit ".$n.") AS IO
+                      LEFT JOIN
+                        station AS T
+                        ON IO.to_station_id = T.station_id
+                  ON IO.from_station_id = F.station_id
+                  ;";
     // echo($sql_query);
     $result = $mysqli->query($sql_query);
     $trip_array = array();
 
     if ($result) {
+      $count = 0;
       while ($next_row = $result->fetch_array()) {
         
         $trip = array(
@@ -61,10 +77,11 @@ class Trip
           'from_latitude' => $next_row['from_latitude'],
           'from_longitude' => $next_row['from_longitude'],
           'flow' => $next_row['flow'],
-          'trip_id' => $next_row['trip_id']
+          'trip_id' => $count
           );
 
         $trip_array[] = $trip;
+        $count++;
       }
     }
     return $trip_array;
@@ -93,27 +110,43 @@ class Trip
     $n = 5;
     $db_info = parse_ini_file("db.ini");
     $mysqli = new mysqli($db_info["server"], $db_info["username"],$db_info["password"],$db_info["dbname"]);
-    $sql_query = "select from_station_id, longitude As from_longitude, latitude AS from_latitude,
-                                      to_station_id, to_longitude, to_latitude, flow, trip_id
-                              from station AS S2
-                              RIGHT JOIN
-                                (select trip_id,to_station_id, longitude As to_longitude, latitude AS to_latitude, from_station_id, flow
-                                from station AS S1
-                                RIGHT JOIN
-                                  (select trip_id, from_station_id, to_station_id, count(*) AS flow from trip 
-                                    where ".$dir."_station_id = ".$sid
-                                    .$date_sql.
-                                    " group by ".$group_sql."_station_id
-                                    ORDER BY flow ".$order_sql." LIMIT ".$n." ) AS IO
-                                ON IO.to_station_id = S1.station_id) AS TMP
-                              ON TMP.from_station_id = S2.station_id;";
-    // echo($sql_query);
+    // $sql_query = "select from_station_id, longitude As from_longitude, latitude AS from_latitude,
+    //                                   to_station_id, to_longitude, to_latitude, flow, trip_id
+    //                           from station AS S2
+    //                           RIGHT JOIN
+    //                             (select trip_id,to_station_id, longitude As to_longitude, latitude AS to_latitude, from_station_id, flow
+    //                             from station AS S1
+    //                             RIGHT JOIN
+    //                               (select trip_id, from_station_id, to_station_id, count(*) AS flow from trip 
+    //                                 where ".$dir."_station_id = ".$sid
+    //                                 .$date_sql.
+    //                                 " group by ".$group_sql."_station_id
+    //                                 ORDER BY flow ".$order_sql." LIMIT ".$n." ) AS IO
+    //                             ON IO.to_station_id = S1.station_id) AS TMP
+    //                           ON TMP.from_station_id = S2.station_id;";
+    
+    $sql_query = "select from_station_id, F.longitude AS from_longitude, F.latitude AS from_latitude,
+                      to_station_id, T.longitude AS to_longitude, T.latitude AS to_latitude, flow
+                  from 
+                    station AS F
+                  RIGHT JOIN
+                    (select from_station_id,to_station_id,sum(flow) as flow 
+                      FROM sum_trip
+                      WHERE ".$dir."_station_id = ".$sid
+                      .$date_sql.
+                      " GROUP BY ".$group_sql."_station_id ) AS IO
+                      LEFT JOIN
+                        station AS T
+                        ON IO.to_station_id = T.station_id
+                  ON IO.from_station_id = F.station_id
+                  ;";
+    echo($sql_query);
     $result = $mysqli->query($sql_query);
     $trip_array = array();
 
     if ($result) {
+      $count = 0;
       while ($next_row = $result->fetch_array()) {
-        
         $trip = array(
           'to_station_id' => $next_row['to_station_id'],
           'from_station_id' => $next_row['from_station_id'],
@@ -122,9 +155,9 @@ class Trip
           'from_latitude' => $next_row['from_latitude'],
           'from_longitude' => $next_row['from_longitude'],
           'flow' => $next_row['flow'],
-          'trip_id' => $next_row['trip_id']
+          'trip_id' => $count
           );
-
+        $count++;
         $trip_array[] = $trip;
       }
     }
@@ -137,27 +170,44 @@ class Trip
     $mysqli = new mysqli($db_info["server"], $db_info["username"],$db_info["password"],$db_info["dbname"]);
     // Check date format
     if ($date1 == ''){
-      $date1 = '2013-01-01';
+      $date1 = '2013-01';
     }else if ($date2 == ''){
-      $date2 = date('Y-m-d');
+      $date2 = date('Y-m');
     }
-    $result = $mysqli->query("select from_station_id, longitude As from_longitude, latitude AS from_latitude,
-                                      to_station_id, to_longitude, to_latitude, flow, trip_id
-                              from station AS S2
-                              RIGHT JOIN
-                                (select to_station_id, longitude As to_longitude, latitude AS to_latitude, from_station_id, flow, trip_id
-                                from station AS S1
-                                RIGHT JOIN
-                                  (select trip_id, from_station_id, to_station_id, count(*) AS flow from trip
-                                    where starttime >= '".$date1."' and starttime <= '".$date2."' 
-                                    group by from_station_id,to_station_id) AS IO
-                                ON IO.to_station_id = S1.station_id) AS TMP
-                              ON TMP.from_station_id = S2.station_id;");
+    $date_sql = "where triptime >= '".$date1."' and triptime <= '".$date2."'";
+    // $sql_query = "select from_station_id, longitude As from_longitude, latitude AS from_latitude,
+    //                                   to_station_id, to_longitude, to_latitude, flow, trip_id
+    //                           from station AS S2
+    //                           RIGHT JOIN
+    //                             (select to_station_id, longitude As to_longitude, latitude AS to_latitude, from_station_id, flow, trip_id
+    //                             from station AS S1
+    //                             RIGHT JOIN
+    //                               (select trip_id, from_station_id, to_station_id, count(*) AS flow from trip
+    //                                 where starttime >= '".$date1."' and starttime <= '".$date2."' 
+    //                                 group by from_station_id,to_station_id) AS IO
+    //                             ON IO.to_station_id = S1.station_id) AS TMP
+    //                           ON TMP.from_station_id = S2.station_id;";
+    $sql_query = "select from_station_id, F.longitude AS from_longitude, F.latitude AS from_latitude,
+                      to_station_id, T.longitude AS to_longitude, T.latitude AS to_latitude, flow
+                  from 
+                    station AS F
+                  RIGHT JOIN
+                    (select from_station_id,to_station_id,sum(flow) as flow 
+                      FROM sum_trip
+                      ".$date_sql." 
+                      GROUP BY from_station_id,to_station_id) AS IO
+                      LEFT JOIN
+                        station AS T
+                        ON IO.to_station_id = T.station_id
+                  ON IO.from_station_id = F.station_id
+                  ;";   
+    $result = $mysqli->query($sql_query);
+    
     $trip_array = array();
 
     if ($result) {
+      $count = 0;
       while ($next_row = $result->fetch_array()) {
-        
         $trip = array(
           'to_station_id' => $next_row['to_station_id'],
           'from_station_id' => $next_row['from_station_id'],
@@ -166,9 +216,9 @@ class Trip
           'from_latitude' => $next_row['from_latitude'],
           'from_longitude' => $next_row['from_longitude'],
           'flow' => $next_row['flow'],
-          'trip_id' => $next_row['trip_id']
+          'trip_id' => $count
           );
-
+        $count++;
         $trip_array[] = $trip;
       }
     }

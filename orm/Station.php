@@ -59,7 +59,7 @@ class Station
     return $station_array;
   }
 
-  public static function getNStations($n,$order,$weight) {
+  public static function getNStations($n,$order,$weight,$date1,$date2) {
     if ($order == 'top'){
       $order_sql = 'DESC';
     } else if($order == 'bottom'){
@@ -79,6 +79,19 @@ class Station
     }else{
       return null;
     }
+    
+    if ($date1 == '' && $date2 == ''){
+      $date_sql = '';
+    } else{
+      
+      
+      if ($date1 == ''){
+        $date1 = '2013-01-01';
+      }else if ($date2 == ''){
+        $date2 = date('Y-m-d');
+      }
+      $date_sql = "where starttime >= '".$date1."' and starttime <= '".$date2."'";
+    }
     $db_info = parse_ini_file("db.ini");
     $mysqli = new mysqli($db_info["server"], $db_info["username"],$db_info["password"],$db_info["dbname"]);
 
@@ -86,9 +99,9 @@ class Station
       from station AS S
       LEFT JOIN
         (SELECT station_id AS station_id, inflow, outflow FROM
-          (SELECT to_station_id AS station_id,count(*) AS inflow from trip group by to_station_id) AS I
+          (SELECT to_station_id AS station_id,count(*) AS inflow from trip ".$date_sql." group by to_station_id ) AS I
           LEFT JOIN
-            (SELECT from_station_id,count(*) AS outflow from trip group by from_station_id) AS O
+            (SELECT from_station_id,count(*) AS outflow from trip ".$date_sql." group by from_station_id) AS O
           ON I.station_id = O.from_station_id) AS IO
       ON S.station_id = IO.station_id
       Order by ".$weight_sql." ".$order_sql." LIMIT ".$n.";";

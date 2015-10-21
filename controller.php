@@ -29,6 +29,13 @@ if($_SERVER['REQUEST_METHOD'] == 'GET') {
 				print(json_encode($all_stations));
 				exit();
 			}if (count($path_components) >= 4) {
+				$date1 = '';
+				$date2 = '';
+
+				if (count($path_components) == 7){
+					$date1 = $path_components[5];
+					$date2 = $path_components[6];
+				}
 				//url:	~/station/top/N/in  or ~/station/top/N/out  or  ~/station/top/N [in & out]
 				//url:	~/station/bottom/N/in or ~/station/bottom/N/out or  ~/station/bottom/N [in & out]
 				if (($path_components[2] == 'top' || $path_components[2] == 'bottom')
@@ -41,11 +48,11 @@ if($_SERVER['REQUEST_METHOD'] == 'GET') {
 					}else{
 						$weight = $path_components[4];
 					} 					
-					$all_stations = Station::getNStations($num_of_station,$order,$weight);
+					$all_stations = Station::getNStations($num_of_station,$order,$weight,$date1,$date2);
 					if ($all_stations == null) {
 						//Station info not found
 						header("HTTP/1.1 404 Not Found");
-						print("Data for ".$order." ".$weight." ".$num_of_station."stations are null;");
+						print("Data for ".$order." ".$weight." ".$num_of_station." stations are null;");
 						exit();
 					}
 

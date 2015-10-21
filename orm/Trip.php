@@ -25,7 +25,7 @@ class Trip
     } else{
       if ($date1 == ''){
         $date1 = '2013-01-01';
-      }else{
+      }else if ($date2 == ''){
         $date2 = date('Y-m-d');
       }
       $date_sql = "where starttime >= '".$date1."' and starttime <= '".$date2."'";
@@ -83,7 +83,7 @@ class Trip
     } else{
       if ($date1 == ''){
         $date1 = '2013-01-01';
-      }else{
+      }else if ($date2 == ''){
         $date2 = date('Y-m-d');
       }
       $date_sql = " and starttime >= '".$date1."' and starttime <= '".$date2."'";
@@ -138,7 +138,7 @@ class Trip
     // Check date format
     if ($date1 == ''){
       $date1 = '2013-01-01';
-    }else{
+    }else if ($date2 == ''){
       $date2 = date('Y-m-d');
     }
     $result = $mysqli->query("select from_station_id, longitude As from_longitude, latitude AS from_latitude,

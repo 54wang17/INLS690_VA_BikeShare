@@ -65,12 +65,14 @@ var submit_date_query = function () {
 			return false;			
 		}else{
 			console.log(from_date+':'+to_date);	
+			console.log("./controller.php/station/"+rank+"/50/"+weight+"/"+from_date+"/"+to_date);
 			$.ajax({
 				url: "./controller.php/station/"+rank+"/50/"+weight+"/"+from_date+"/"+to_date, 
 				type: "GET",
 				datatype: "JSON",
 	            success: function(return_obj, status, jqXHR){
-	            			console.log("Get Data")
+	            			console.log("Get Data");
+	            			console.log(return_obj);
 							renderStation(return_obj);
 						},
 				statusCode: {

@@ -123,8 +123,9 @@ class Station
 
     $sql_query = "select DISTINCT S.station_id,name,latitude,longitude,dpcapacity,dateCreated,inflow,outflow 
       from 
-        (SELECT station_id AS station_id, sum(inflow) as inflow FROM station_inflow ".$date_sql.
-        "GROUP BY station_id
+        (SELECT station_id AS station_id, sum(inflow) as inflow FROM station_inflow 
+          ".$date_sql."
+          GROUP BY station_id
         ) AS I
       RIGHT JOIN station AS S
         LEFT JOIN

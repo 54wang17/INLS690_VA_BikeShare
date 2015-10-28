@@ -28,7 +28,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET') {
 				header("Content-type: application/json");
 				print(json_encode($all_stations));
 				exit();
-			}if (count($path_components) >= 4) {
+			}if (count($path_components) >= 4 && count($path_components) <= 7) {
 				$date1 = '';
 				$date2 = '';
 

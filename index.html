@@ -6,35 +6,86 @@
 <script src="http://ils.unc.edu/~gotz/courses/js/d3.v3.min.js"></script>
 <script src="./js/RefineData.js"></script>
 <style>
-#map { height: 680px; width: 600px;}
+body {
+font-family: Calibri;
+}
+#DateRange {
+border: 1px solid black;
+float: right;
+width: 19%;
+height: 680px;
+}
+#stationInfoSection {
+height: 500px;
+border: 1px solid blue;
+}
+#stationInfo {
+border: 1px solid green;
+height: 300px;
+}
+
+#map { 
+height: 680px; width: 80%;
+
+float: left;
+}
+select {
+border-radius: 50%;
+height: 25px;
+width: 100px;
+}
+
+#DateQuery {
+background-color: Green;
+color: white;
+border: 1px solid Green;
+height: 25px;
+width: 100px;
+display: block;
+margin: auto;
+}
 </style>
 <body>
+<h2> Divvy Station Rankings by Trip Volume</h2> 
 <div id = "filter">
-	<form id= "DateRange">
-		<p id= 'error'></p>
-		From:
-		<!-- <select class='day' id= 'f_day'></select> -->
-		<select class='date' id= 'f_date'></select>
+<span id="details">&nbsp;</span><br/>
+<p id= 'error'></p>
+<div id="DateRange">
+	<form id="filterInfo">
+			<label for="Rank" id="ranklabel">Show Ranking:</label> 
+			<select id='Rank'>
+  				<option value="top">Top 50</option>
+  				<option value="bottom">Bottom 50</option>
+			</select>
+			<br></br>
+			<label for="FlowDir" id="FlowDirlabel">Trip Direction: </label>
+			<select id='FlowDir'>
+				<option value="all">Both</option>
+	  			<option value="in">Incoming</option>
+	  			<option value="out">Outgoing</option>
+			</select>
+			<br></br>
+			<label for="f_date" id="f_datelabel">From:    </label>
+			<!-- <select class='day' id= 'f_day'></select> -->
+
+			<select class='date' id= 'f_date'></select>
 		<!-- <select class='year' id= 'f_year'></select> -->
-		To:
+			<br></br>
+			<label for="t_date" id="t_datelabel">To: </label>
 		<!-- <select class='day' id= 't_day'></select> -->
 		<!-- <select class='month' id= 't_month'></select> -->
-		<select class='date' id= 't_date'></select>
-		
-		<select id='Rank'>
-  			<option value="top">Top 50</option>
-  			<option value="bottom">Bottom 50</option>
-		</select>
-		<select id='FlowDir'>
-			<option value="all">Both</option>
-	  		<option value="in">Incoming</option>
-	  		<option value="out">Outgoing</option>
-		</select>
-
-		<button id='DateQuery'type="submit" >Submit</button>
+			<select class='date' id= 't_date'></select>
+			<br></br>
+			<button id='DateQuery'type="submit" >Submit</button>
 	</form>
-
-	
+	<br></br>
+	<div id="stationInfoSection">
+		<h3>Station Information</h3>
+		<p>Click on the circles to read more about the stations.</p>
+		<div id="stationInfo">
+			<span id="test"></span>
+		</div>
+	</div>
 </div> 
 
 
@@ -66,22 +117,30 @@ function renderStation(collection){
 	var feature = g.selectAll(".station")
 	      .data(collection,function(d){return d.station_id;});
 	// console.log(feature);
-	var circle_normalized = d3.mean(collection.filter(function(d){return (d.inflow+d.outflow)>0;}),
-									function(d){return d.inflow+d.outflow;})/6.0;
+	var circle_normalized = d3.mean(collection.filter(function(d){return (d.inflow+d.outflow)>0;}),function(d){return d.inflow+d.outflow;})/6.0;
 	// console.log(circle_normalized);
 	feature.enter().append("circle")
 	      .style("stroke", "black")  
 	      .style("opacity", .6) 
-	      .style("fill", function(d){if ((d.inflow + d.outflow)>0){return "red";}else{return "black";} })
+	      .style("fill", function(d){if ((d.inflow + d.outflow)>0){return "green";}else{return "black";} })
 	      .attr("class","station")
 	      .attr("cx",function(d){return map.latLngToLayerPoint(d.LatLng).x;})
 	      .attr("cy",function(d){return map.latLngToLayerPoint(d.LatLng).y;})
 	      .attr("r", function(d){return ((d.inflow+d.outflow))/circle_normalized;})
-	      .on('click',function(d){
+	      .on("click",function(d){
 	      		console.log(d.station_id);
-	      		console.log(d.inflow + d.outflow);
-	      		console.log(circle_normalized);
-	      });  
+	      		//getElementById("test").innerHTML = 
+	      		//"<h4>station id</h4>";
+	      		console.log("hello");
+	      		document.getElementById("test").innerHTML = "<h4>"+d.name+"</h4>"+
+	      		"<p>Capacity: "+d.dpcapacity+" </p>"+
+	      		"<p>Number of trips to this station during time period selected: "+d.inflow+" </p>"+
+	      		"<p>Number of trips from this station during time period selected: "+d.outflow+" </p>"+
+	      		"<p>Average number of trips monthly during time period selected: ";    		
+	     		d3.select(this).style("fill", "red");
+	      }) ; 
+
+	
 
 	feature.attr("r", function(d){return ((d.inflow+d.outflow))/circle_normalized;});
 	map.on("viewreset", update);
@@ -90,13 +149,14 @@ function renderStation(collection){
 	feature.exit().remove();
 
 
+
 	function update() {
 		feature.attr("cx",function(d){return map.latLngToLayerPoint(d.LatLng).x;})
 	    	.attr("cy",function(d){return map.latLngToLayerPoint(d.LatLng).y;})
 	 		.attr("r", function(d){
 	      		var change_ratio = map.getZoom()/6;
 	      		// console.log(3*(d.inflow+d.outflow)/30000*change_ratio);
-	      		var normalized_r = (d.inflow+d.outflow)/circle_normalized;
+	      		var normalized_r = (d.inflow+d.outflow)/circle_normalized;		
 	      		if ((d.inflow + d.outflow) == 0){
 	      			normalized_r = 5;
 	      		}
@@ -174,10 +234,13 @@ function renderTrip(collection){
 	      .attr("y2",function(d){return map.latLngToLayerPoint(d.ELatLng).y;});
 
 	   	line_link.exit().remove();
+	   	
+	    
 
 	}
 	
 }
+
 
 
 </script>

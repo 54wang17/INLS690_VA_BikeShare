@@ -37,10 +37,19 @@ function display_date_range(){
 			}else{
 				$date = i+"-"+j;
 			}
-			
+//CHANGED//			
 			if (($date <= '2015-06') && ($date >= '2013-07')){
-				var date_option = $("<option value='"+$date+"'>"+$date+"</option>");
+				var month_detail = {"01": "January", "02": "February", "03": "March", "04": "April", "05": "May", 
+				"06": "June", "07": "July", "08": "August", "09": "September", "10": "October", "11": "November", 
+				"12": "December"};
+				var year_detail = {"2013": "2013", "2014": "2014", "2015": "2015"};
+				var date = $date;
+				var parseDate = date.split('-'); 
+				var month2 = parseDate[1];
+				var year2 = parseDate[0];
+				var date_option = $("<option value='"+$date+"'>"+month_detail[month2]+" "+year_detail[year2]+"</option>");
 				date_select.append(date_option);
+//CHANGED END//
 			}
 		}
 	}

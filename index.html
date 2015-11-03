@@ -156,10 +156,10 @@ function renderStation(collection){
 	 		.attr("r", function(d){
 	      		var change_ratio = map.getZoom()/6;
 	      		// console.log(3*(d.inflow+d.outflow)/30000*change_ratio);
-	      		var normalized_r = (d.inflow+d.outflow)/circle_normalized;	      		if ((d.inflow + d.outflow) == 0){		
+	      		var normalized_r = (d.inflow+d.outflow)/circle_normalized;		
 	      		if ((d.inflow + d.outflow) == 0){
-	      			normalized_r = 5;		
-	      		}		
+	      			normalized_r = 5;
+	      		}
 	      		return normalized_r*change_ratio;}); 
 
 	 // feature.attr("transform", 

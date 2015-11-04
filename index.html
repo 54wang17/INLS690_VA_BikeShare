@@ -113,6 +113,8 @@ function renderStation(collection){
                   d.longitude);
     })
 	// console.log(collection);
+	var bounds = new L.LatLngBounds(collection.map(function(d){console.log(d.LatLng);return d.LatLng}));
+	map.fitBounds(bounds);
 
 	var feature = g.selectAll(".station")
 	      .data(collection,function(d){return d.station_id;});
@@ -197,7 +199,6 @@ function renderTrip(collection){
 	      d.ELatLng = new L.LatLng(d.to_latitude,
 	                  d.to_longitude);
 	    });
-
 	map.on("viewreset", Linkupdate);
 
 	// console.log(g.selectAll("circle"));

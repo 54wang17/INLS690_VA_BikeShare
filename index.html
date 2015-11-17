@@ -5,6 +5,8 @@
 <script src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
 <script src="http://ils.unc.edu/~gotz/courses/js/d3.v3.min.js"></script>
 <script src="./js/RefineData.js"></script>
+<script src="./RadarChart.js"></script>
+
 <style>
 body {
 font-family: Calibri;
@@ -12,20 +14,27 @@ font-family: Calibri;
 #DateRange {
 border: 1px solid black;
 float: right;
-width: 19%;
+width: 60%;
 height: 680px;
 }
 #stationInfoSection {
-height: 500px;
+height: 600px;
 border: 1px solid blue;
 }
 #stationInfo {
 border: 1px solid green;
-height: 300px;
+height: 150px;
+line-height: 50%;
+}
+
+
+#f_datelabel {
+float: left;	
+
 }
 
 #map { 
-height: 680px; width: 80%;
+height: 680px; width: 30%;
 
 float: left;
 }
@@ -41,23 +50,36 @@ color: white;
 border: 1px solid Green;
 height: 25px;
 width: 100px;
-display: block;
+
+
+}
+
+#chart {
+
+top: 50px;
+
+height: 300px;
+width: 300px;
 margin: auto;
+display: block;
 }
 </style>
 <body>
-<h2> Divvy Station Rankings by Trip Volume</h2> 
+<b> Divvy Station Rankings by Trip Volume</b>
+//map--make buffer around less
+//on mouseover cirlce in radar--highlight circle on map
 <div id = "filter">
-<span id="details">&nbsp;</span><br/>
-<p id= 'error'></p>
+
 <div id="DateRange">
 	<form id="filterInfo">
+// should delete:		
 			<label for="Rank" id="ranklabel">Show Ranking:</label> 
 			<select id='Rank'>
   				<option value="top">Top 50</option>
   				<option value="bottom">Bottom 50</option>
 			</select>
-			<br></br>
+			
+// should delete:
 			<label for="FlowDir" id="FlowDirlabel">Trip Direction: </label>
 			<select id='FlowDir'>
 				<option value="all">Both</option>
@@ -70,28 +92,34 @@ margin: auto;
 
 			<select class='date' id= 'f_date'></select>
 		<!-- <select class='year' id= 'f_year'></select> -->
-			<br></br>
+			
 			<label for="t_date" id="t_datelabel">To: </label>
 		<!-- <select class='day' id= 't_day'></select> -->
 		<!-- <select class='month' id= 't_month'></select> -->
 			<select class='date' id= 't_date'></select>
-			<br></br>
+			
 			<button id='DateQuery'type="submit" >Submit</button>
 	</form>
-	<br></br>
+	<!--<span id="details">&nbsp;</span><br/>-->
+<p id= 'error'></p>
 	<div id="stationInfoSection">
-		<h3>Station Information</h3>
-		<p>Click on the circles to read more about the stations.</p>
+		<p></p><b>Station Information</b> (Click on the circles to read more about the stations.)</p>
 		<div id="stationInfo">
 			<span id="test"></span>
 		</div>
+		
+		<div id="chart"></div>	
 	</div>
+
 </div> 
 
 
 <div id = "map"></div>
-<script>
 
+<script>
+	
+
+	
 // initialize map
 var map = L.map('map').setView([41.88595806,-87.62773949], 13);
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -130,16 +158,17 @@ function renderStation(collection){
 	      .attr("cy",function(d){return map.latLngToLayerPoint(d.LatLng).y;})
 	      .attr("r", function(d){return ((d.inflow+d.outflow))/circle_normalized;})
 	      .on("click",function(d){
-	      		console.log(d.station_id);
+	      		//console.log(d.station_id);
 	      		//getElementById("test").innerHTML = 
 	      		//"<h4>station id</h4>";
-	      		console.log("hello");
-	      		document.getElementById("test").innerHTML = "<h4>"+d.name+"</h4>"+
+	      		//console.log("hello");
+	      		document.getElementById("test").innerHTML = "<b>"+d.name+"</b>"+
 	      		"<p>Capacity: "+d.dpcapacity+" </p>"+
 	      		"<p>Number of trips to this station during time period selected: "+d.inflow+" </p>"+
 	      		"<p>Number of trips from this station during time period selected: "+d.outflow+" </p>"+
 	      		"<p>Average number of trips monthly during time period selected: ";    		
 	     		d3.select(this).style("fill", "red");
+			//when click new one, old one back to green
 	      }) ; 
 
 	
@@ -245,5 +274,7 @@ function renderTrip(collection){
 
 
 </script>
+<script type="text/javascript" src="script.js"></script>
+
 </body>
 </html>

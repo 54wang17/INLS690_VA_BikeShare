@@ -1,23 +1,11 @@
 $(document).ready(function(){
 	display_date_range();
-	// $.ajax("./controller.php/trip",
-	//        {   type: "GET",
-	// 	       dataType: "json",
-	// 	       success: function(return_obj, status, jqXHR) {
-	// 	      	// console.log(return_obj);
-	// 	      	filter_obj = return_obj.filter(function(d){
-	// 	      		return d.flow > 50;
-	// 	      	})
-	// 	      	// console.log(filter_obj);
-	// 	      	renderTrip(filter_obj);
-	// 	   }
-	// });
+
 	$.ajax("./controller.php/station/top/50",
 	       {   type: "GET",
 		       dataType: "json",
 		       success: function(return_obj, status, jqXHR) {
 		      	// console.log(return_obj);
-
 		      	renderStation(return_obj);
 		   }
 	});
@@ -65,18 +53,18 @@ var submit_date_query = function () {
 		
 		var to_date = $('select#t_date').val();
 
-		var weight = $('select#FlowDir').val();
+		// var weight = $('select#FlowDir').val();
 
-		var rank = $('select#Rank').val();
+		// var rank = $('select#Rank').val();
 	
 		if (from_date>to_date){
 			$("#error").html("The end date should be greater than start date !")
 			return false;			
 		}else{
 			console.log(from_date+':'+to_date);	
-			console.log("./controller.php/station/"+rank+"/50/"+weight+"/"+from_date+"/"+to_date);
+			console.log("./controller.php/station/top/50/all/"+from_date+"/"+to_date);
 			$.ajax({
-				url: "./controller.php/station/"+rank+"/50/"+weight+"/"+from_date+"/"+to_date, 
+				url: "./controller.php/station/top/50/all/"+from_date+"/"+to_date, 
 				type: "GET",
 				datatype: "JSON",
 	            success: function(return_obj, status, jqXHR){
@@ -94,6 +82,22 @@ var submit_date_query = function () {
 		
 	});
 }
+
+	// $.ajax("./controller.php/trip",
+	//        {   type: "GET",
+	// 	       dataType: "json",
+	// 	       success: function(return_obj, status, jqXHR) {
+	// 	      	// console.log(return_obj);
+	// 	      	filter_obj = return_obj.filter(function(d){
+	// 	      		return d.flow > 50;
+	// 	      	})
+	// 	      	// console.log(filter_obj);
+	// 	      	renderTrip(filter_obj);
+	// 	   }
+	// });
+
+
+
 
 // var validate_date = function(day,month,year){
 // 	if (year == '2015'){

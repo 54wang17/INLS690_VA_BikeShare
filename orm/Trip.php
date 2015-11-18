@@ -140,7 +140,7 @@ class Trip
                         ON IO.to_station_id = T.station_id
                   ON IO.from_station_id = F.station_id
                   ;";
-    echo($sql_query);
+    // echo($sql_query);
     $result = $mysqli->query($sql_query);
     $trip_array = array();
 

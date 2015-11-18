@@ -204,7 +204,7 @@ var RadarChart =
 						.style("fill-opacity", .7);
 					//ADDED TO HIGHLIGHT STATION ON MAP FROM RADAR
 					d3.select(this).style("fill","yellow");
-					d3.select(".station").style("fill", "blue");
+					d3.selectAll(".station").filter(function(j){return d.key == j.station_id;}).style("fill", "blue");
 				  })
 		.on('mouseout', function(){
 					tooltip
@@ -215,7 +215,8 @@ var RadarChart =
 						.style("fill-opacity", cfg.opacityArea);
 					//ADDED TO HIGHLIGHT STATION ON MAP FROM RADAR
 					d3.select(this).style("fill", cfg.color(series)).style("fill-opacity", .9)
-					d3.select(".station").style("fill", "green");
+					d3.selectAll(".station").style("fill", "green");
+					d3.select("#clicked_station").style("fill", "red");
 				  })
 		.append("svg:title")
 		.text(function(j){return Math.max(j.value, 0)});

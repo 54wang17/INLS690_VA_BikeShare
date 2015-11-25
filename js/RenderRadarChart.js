@@ -1,8 +1,8 @@
 renderRadarChart = function(station_id,all_stations){
 	console.log("RadarChart_Render called;");
 	
-	var w = 300,
-	h = 300;
+	var w = 700,
+	h = 700;
 
 	var colorscale = d3.scale.category10();
 
@@ -49,6 +49,12 @@ renderRadarChart = function(station_id,all_stations){
 								Incoming.push({axis:d.name,value:Number(d.incoming_flow),key:d.station_id});
 								Outgoing.push({axis:d.name,value:Number(d.outgoing_flow),key:d.station_id});
 							});
+							// Outgoing.forEach(function(d,i) {
+							// 	d.value = Math.log2(d.value);
+							// });
+							// Incoming.forEach(function(d,i) {
+							// 	d.value = Math.log2(d.value);
+							// });
 							console.log(Outgoing.map(function(d){return d.value;}));
 							console.log(Incoming.map(function(d){return d.value;}));
 
@@ -67,9 +73,9 @@ renderRadarChart = function(station_id,all_stations){
 var mycfg = {
   w: w,
   h: h,
-  maxValue: 0.6,
-  levels: 6,
-  ExtraWidthX: 300
+  maxValue: 1,
+  levels: 10,
+  ExtraWidthX: 200
 }
 
 //Call function to draw the Radar chart

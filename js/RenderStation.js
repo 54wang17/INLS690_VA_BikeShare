@@ -1,6 +1,6 @@
 function renderStation(collection){
 	d3.select("#chart").select("svg").remove();
-	
+
 	collection.forEach(function(d,i) {
 		d.rank = i+1;
       	d.LatLng = new L.LatLng(d.latitude,
@@ -23,11 +23,19 @@ function renderStation(collection){
 	      .attr("cy",function(d){return map.latLngToLayerPoint(d.LatLng).y;})
 	      .attr("r", function(d){return ((d.inflow+d.outflow))/circle_normalized;})
 	      .on("click",function(d){
-	      		document.getElementById("test").innerHTML = "<b>"+d.name+"</b>"+
+	      		document.getElementById("DateRange").innerHTML =
+			"<div id='stationInfoSection'>" +
+		//"<p><b>Station Information</b> (Click on the circles to read more about the stations.)</p>"+
+		"<div id='stationInfo'>"+
+			"<b>Station: "+d.name+"</b>"+
 	      		"<p>Capacity: "+d.dpcapacity+" </p>"+
 	      		"<p>Number of trips to this station during time period selected: "+d.inflow+" </p>"+
 	      		"<p>Number of trips from this station during time period selected: "+d.outflow+" </p>"+
-	      		"<p>Average number of trips monthly during time period selected: ";    		
+	      		// "<p>Average number of trips monthly during time period selected: "+
+		"</div>"+
+		"<div id='chart'></div>"+	
+	"</div>";
+			 		
 	     		d3.selectAll(".station").attr("id",null).style("fill", "green");
 	     		d3.select(this).style("fill", "red").attr("id","clicked_station");
 	     		renderRadarChart(d.station_id,collection);

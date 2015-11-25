@@ -1,5 +1,5 @@
-renderRadarChart = function(station_id,all_stations){
-	console.log("RadarChart_Render called;");
+renderCharts = function(station_id,all_stations){
+	console.log("Charts_Render called;");
 	
 	var w = 700,
 	h = 700;
@@ -21,7 +21,6 @@ renderRadarChart = function(station_id,all_stations){
 	     			if (station_index >=0) {
 	     				var fil=return_obj.filter(function(j){return d.station_id == j.from_station_id;})
 	     				station_incoming_flow = fil[0].flow;
-	     				// console.log(station_name + '- Incoming:' + station_incoming_flow);
 	     			}
 	     			d.incoming_flow = station_incoming_flow;
 	      		});
@@ -41,8 +40,7 @@ renderRadarChart = function(station_id,all_stations){
 				     			}
 				     			d.outgoing_flow = station_outgoing_flow;
 				      		});
-				      		console.log(all_stations);
-				      		console.log("Generate Data!");
+				      		console.log("Generate Trip Data!");
 							var Incoming = [];
 							var Outgoing = [];
 							all_stations.forEach(function(d,i) {
@@ -55,12 +53,11 @@ renderRadarChart = function(station_id,all_stations){
 							// Incoming.forEach(function(d,i) {
 							// 	d.value = Math.log2(d.value);
 							// });
-							console.log(Outgoing.map(function(d){return d.value;}));
-							console.log(Incoming.map(function(d){return d.value;}));
 
 							d = [Incoming,Outgoing];
 							// d3.select('#chart').remove();
 							RadarChart.draw("#chart", d, mycfg);
+							renderVolumeChart(all_stations);
 					   	}
 					});
 				

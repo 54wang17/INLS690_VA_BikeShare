@@ -38,14 +38,13 @@ function renderStation(collection){
 			 		
 	     		d3.selectAll(".station").attr("id",null).style("fill", "green");
 	     		d3.select(this).style("fill", "red").attr("id","clicked_station");
-	     		renderRadarChart(d.station_id,collection);
+	     		renderCharts(d.station_id,collection);
 	      }) ; 
 
 	
 
 	feature.attr("class","station")	      
 			.style("fill", function(d){
-				console.log("update colore")
 				if ((d.inflow + d.outflow)>0){return "green";}else{return "black";} })
 			.attr("r", function(d){return ((d.inflow+d.outflow))/circle_normalized;});
 	map.on("viewreset", update);
@@ -62,7 +61,6 @@ function renderStation(collection){
 	 		.style("fill", function(d){if ((d.inflow + d.outflow)>0){return "green";}else{return "black";} })
 	 		.attr("r", function(d){
 	      		var change_ratio = map.getZoom()/6;
-	      		// console.log(3*(d.inflow+d.outflow)/30000*change_ratio);
 	      		var normalized_r = (d.inflow+d.outflow)/circle_normalized;		
 	      		if ((d.inflow + d.outflow) == 0){
 	      			normalized_r = 5;
@@ -78,7 +76,6 @@ function renderStation(collection){
 		 //      map.latLngToLayerPoint(d.LatLng).x +","+ 
 		 //      map.latLngToLayerPoint(d.LatLng).y +")";
 		 //    })
-	 	console.log("Zoom:" +map.getZoom());
 	}
 	
 }

@@ -123,9 +123,7 @@ var RadarChart =
 			d3.selectAll(".station").filter(function(j){return d == j.name;}).style("fill", "yellow");
 			//ADDED TO HIGHLIGHT STATION ON MAP FROM RADAR
 			d3.select(this).style('font-weight','bold').style('font-size','14pt');
-			d3.selectAll("text.legend").filter(function(j){
-				// console.log(d.axis);
-				return j != d;}).style('opacity','0.4');
+			d3.selectAll("text.legend").filter(function(j){return j != d;}).style('opacity','0.4');
 		})
 		.on('mouseout', function(){
 			d3.selectAll(".station").style("fill", "green");
@@ -224,10 +222,8 @@ var RadarChart =
 					d3.select(this).style("fill","yellow");
 					d3.selectAll(".station").filter(function(j){return d.key == j.station_id;}).style("fill", "yellow");
 					d3.selectAll("text.legend").filter(function(j){
-						// console.log(d.axis);
 						return j == d.axis;}).style('font-weight','bold').style('font-size','14pt');
 					d3.selectAll("text.legend").filter(function(j){
-						// console.log(d.axis);
 						return j != d.axis;}).style('opacity','0.4');
 				  })
 		.on('mouseout', function(){

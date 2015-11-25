@@ -4,10 +4,15 @@
 <script type="text/javascript" src="./js/jquery-1.11.1.js"></script>
 <script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
 <script type="text/javascript" src="http://ils.unc.edu/~gotz/courses/js/d3.v3.min.js"></script>
-<script type="text/javascript" src="./js/RefineData.js"></script>
+<script type="text/javascript" src="http://ils.unc.edu/~gotz/courses/js/simple_statistics.js" charset="utf-8"></script>
 <script type="text/javascript" src="./js/RadarChart.js"></script>
+<script type="text/javascript" src="./js/RenderVolumeChart.js"></script>
+<script type="text/javascript" src="./js/RenderCharts.js"></script>
 <script type="text/javascript" src="./js/RenderStation.js"></script>
-<script type="text/javascript" src="./js/RenderRadarChart.js"></script>
+<script type="text/javascript" src="./js/RefineData.js"></script>
+
+
+
 
 
 <style>
@@ -82,12 +87,24 @@ background-color:Red;
 text-align: center;	
 }
 
-circle.radar-chart-serie0:hover{
-	fill: black;
+.axis-label {
+    font-family: sans-serif;
+    font-size: 12px;
 }
-circle.radar-chart-serie1:hover{
-	fill: black;
+
+/* Style information for axis lines and tick marks */
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
 }
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 11px;
+}
+
 
 </style>
 <body>
@@ -112,7 +129,8 @@ circle.radar-chart-serie1:hover{
 		</div>
 		<div id="chart"></div>-->	
 	<!--</div>-->
-</div> 
+</div>
+<div id='volumeDistanceChart'></div> 
 </div>
 <div id="left">
 <b>Filter by Date: </b>
@@ -127,7 +145,6 @@ circle.radar-chart-serie1:hover{
 <p id= 'error'></p>
 <div id = "map"></div>	
 </div>
-
 
 <script>
 		

@@ -40,7 +40,7 @@ var RadarChart =
 	var allAxis = (d[0].map(function(i, j){return i.axis}));
 	var total = allAxis.length;
 	var radius = cfg.factor*Math.min(cfg.w/2, cfg.h/2);
-	var Format = d3.format('%');
+	// var Format = d3.format('%');
 	d3.select(id).select("svg").remove();
 	
 	var g = d3.select(id)
@@ -72,7 +72,7 @@ var RadarChart =
 	    	
 	}
 
-	//Text indicating at what % each level is
+	//Text indicating at what each level is
 	for(var j=0; j<cfg.levels; j++){
 	  var levelFactor = cfg.factor*radius*((j+1)/cfg.levels);
 	  g.selectAll(".levels")
@@ -86,7 +86,10 @@ var RadarChart =
 	   .style("font-size", "10px")
 	   .attr("transform", "translate(" + (cfg.w/2-levelFactor + cfg.ToRight) + ", " + (cfg.h/2-levelFactor) + ")")
 	   .attr("fill", "#737373")
-	   .text(Format((j+1)*cfg.maxValue/cfg.levels));
+	   .text((j+1)*cfg.maxValue/cfg.levels);
+	   // .text(Format((j+1)*cfg.maxValue/cfg.levels));
+	   
+	  
 	}
 	
 	series = 0;
@@ -115,8 +118,22 @@ var RadarChart =
 		.attr("dy", "1.5em")
 		.attr("transform", function(d, i){return "translate(0, -10)"})
 		.attr("x", function(d, i){return cfg.w/2*(1-cfg.factorLegend*Math.sin(i*cfg.radians/total))-60*Math.sin(i*cfg.radians/total);})
-		.attr("y", function(d, i){return cfg.h/2*(1-Math.cos(i*cfg.radians/total))-20*Math.cos(i*cfg.radians/total);});
+		.attr("y", function(d, i){return cfg.h/2*(1-Math.cos(i*cfg.radians/total))-20*Math.cos(i*cfg.radians/total);})
+		.on('mouseover', function (d){
+			d3.selectAll(".station").filter(function(j){return d == j.name;}).style("fill", "yellow");
+			//ADDED TO HIGHLIGHT STATION ON MAP FROM RADAR
+			d3.select(this).style('font-weight','bold').style('font-size','14pt');
+			d3.selectAll("text.legend").filter(function(j){
+				// console.log(d.axis);
+				return j != d;}).style('opacity','0.4');
+		})
+		.on('mouseout', function(){
+			d3.selectAll(".station").style("fill", "green");
+			d3.select("#clicked_station").style("fill", "red");
+			// UPDATE LEGEND TEXT STYLE
+			d3.selectAll("text.legend").style('font-weight','normal').style('font-size','11pt').style('opacity','1');
 
+		});
  
 	d.forEach(function(y, x){
 	  dataValues = [];
@@ -187,11 +204,12 @@ var RadarChart =
 		.on('mouseover', function (d){
 					newX =  parseFloat(d3.select(this).attr('cx')) - 10;
 					newY =  parseFloat(d3.select(this).attr('cy')) - 5;
-					
+					d.color = d3.select(this).style('fill');
 					tooltip
 						.attr('x', newX)
 						.attr('y', newY)
-						.text(Format(d.value))
+						.text(d.value)
+						// .text(Format(d.value))
 						.transition(200)
 						.style('opacity', 1);
 						
@@ -204,7 +222,13 @@ var RadarChart =
 						.style("fill-opacity", .7);
 					//ADDED TO HIGHLIGHT STATION ON MAP FROM RADAR
 					d3.select(this).style("fill","yellow");
-					d3.selectAll(".station").filter(function(j){return d.key == j.station_id;}).style("fill", "blue");
+					d3.selectAll(".station").filter(function(j){return d.key == j.station_id;}).style("fill", "yellow");
+					d3.selectAll("text.legend").filter(function(j){
+						// console.log(d.axis);
+						return j == d.axis;}).style('font-weight','bold').style('font-size','14pt');
+					d3.selectAll("text.legend").filter(function(j){
+						// console.log(d.axis);
+						return j != d.axis;}).style('opacity','0.4');
 				  })
 		.on('mouseout', function(){
 					tooltip
@@ -214,9 +238,12 @@ var RadarChart =
 						.transition(200)
 						.style("fill-opacity", cfg.opacityArea);
 					//ADDED TO HIGHLIGHT STATION ON MAP FROM RADAR
-					d3.select(this).style("fill", cfg.color(series)).style("fill-opacity", .9)
+					d3.select(this).style("fill", function(d){return d.color;}).style("fill-opacity", .9)
 					d3.selectAll(".station").style("fill", "green");
 					d3.select("#clicked_station").style("fill", "red");
+					// UPDATE LEGEND TEXT STYLE
+					d3.selectAll("text.legend").style('font-weight','normal').style('font-size','11pt').style('opacity','1');
+
 				  })
 		.append("svg:title")
 		.text(function(j){return Math.max(j.value, 0)});

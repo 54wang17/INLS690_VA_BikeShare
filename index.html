@@ -15,18 +15,23 @@ body {
 font-family: Calibri;
 }
 #DateRange {
-border: 1px solid black;
-float: right;
-width: 60%;
-height: 680px;
+width: 100%;
+
 }
+#right {
+
+float: right;
+width: 69%;
+
+}
+
 #stationInfoSection {
-height: 600px;
-border: 1px solid blue;
+
+
 }
 #stationInfo {
-border: 1px solid green;
-height: 150px;
+
+
 line-height: 50%;
 }
 #f_datelabel {
@@ -34,12 +39,20 @@ float: left;
 }
 
 #map { 
-height: 680px; width: 30%;
+height: 600px;
+width: 100%;
+float: left;
+}
+
+#left { 
+height: 700px;
+width: 30%;
 float: left;
 }
 
 select {
-border-radius: 50%;
+margin-left: 10px;
+margin-right: 20px;
 height: 25px;
 width: 100px;
 }
@@ -50,44 +63,71 @@ color: white;
 border: 1px solid Green;
 height: 25px;
 width: 100px;
+display: block;
+margin: auto;
 }
 
 #chart {
 top: 50px;
-height: 300px;
-width: 300px;
 margin: auto;
 display: block;
 }
-#clicked_station{
+
+#clicked_station
+{
 background-color:Red;
 }
+
+#title {
+text-align: center;	
+}
+
+circle.radar-chart-serie0:hover{
+	fill: black;
+}
+circle.radar-chart-serie1:hover{
+	fill: black;
+}
+
 </style>
 <body>
-<b> Divvy Station Rankings by Trip Volume</b>
-<div id = "filter">
+<!--idea:main page with stats/overall info; say click on station on map; on submit, new page opened/page scrolls down with station info and radar and map
+-->
 
+<div id = "filter">
+<div id="right">
+<h1 id="title"> Divvy Station Rankings by Trip Volume</h1>
 <div id="DateRange">
-	<form id="filterInfo">
+	<p>An overview of the divvy system:....</p>
+	<p>There are 497 stations that are a part of the Divvy Bikeshare system.</p>
+	
+	<p>You can filter by data range. </p>
+	<p>Also, click on a station to read more </p>
+	<!--<span id="details">&nbsp;</span><br/>-->
+	
+	<!--<div id="stationInfoSection">-->
+		<!--<p></p><b>Station Information</b> (Click on the circles to read more about the stations.)</p>
+		<div id="stationInfo">
+			<span id="test"></span>
+		</div>
+		<div id="chart"></div>-->	
+	<!--</div>-->
+</div> 
+</div>
+<div id="left">
+<b>Filter by Date: </b>
+<form id="filterInfo">
 			<label for="f_date" id="f_datelabel">From:    </label>
 			<select class='date' id= 'f_date'></select>
 			<label for="t_date" id="t_datelabel">To: </label>
 			<select class='date' id= 't_date'></select>
+			<br></br>
 			<button id='DateQuery'type="submit" >Submit</button>
 	</form>
-	<!--<span id="details">&nbsp;</span><br/>-->
-	<p id= 'error'></p>
-	<div id="stationInfoSection">
-		<p></p><b>Station Information</b> (Click on the circles to read more about the stations.)</p>
-		<div id="stationInfo">
-			<span id="test"></span>
-		</div>
-		<div id="chart"></div>	
-	</div>
-</div> 
+<p id= 'error'></p>
+<div id = "map"></div>	
+</div>
 
-
-<div id = "map"></div>
 
 <script>
 		

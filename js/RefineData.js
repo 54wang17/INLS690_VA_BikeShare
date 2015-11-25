@@ -1,7 +1,7 @@
 $(document).ready(function(){
 	display_date_range();
 
-	$.ajax("./controller.php/station/top/50",
+	$.ajax("./controller.php/station/top/25",
 	       {   type: "GET",
 		       dataType: "json",
 		       success: function(return_obj, status, jqXHR) {
@@ -62,9 +62,9 @@ var submit_date_query = function () {
 			return false;			
 		}else{
 			console.log(from_date+':'+to_date);	
-			console.log("./controller.php/station/top/50/all/"+from_date+"/"+to_date);
+			console.log("./controller.php/station/top/20/all/"+from_date+"/"+to_date);
 			$.ajax({
-				url: "./controller.php/station/top/50/all/"+from_date+"/"+to_date, 
+				url: "./controller.php/station/top/20/all/"+from_date+"/"+to_date, 
 				type: "GET",
 				datatype: "JSON",
 	            success: function(return_obj, status, jqXHR){

@@ -87,7 +87,7 @@ function renderVolumeChart(all_stations){
    			 .attr("cy", function(d){return y(d[2])})
    			 .on('mouseover', function (d){
    				 d3.select(this).style("fill","yellow");
-   				 d3.selectAll(".station").filter(function(j){return d.station_id == j.station_id;}).style("fill", "blue");
+   				 d3.selectAll(".station").filter(function(j){return parseInt(d[0]) == j.station_id;}).style("fill", "yellow");
    			   })
    	 .on('mouseout', function(){
     

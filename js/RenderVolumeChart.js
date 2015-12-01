@@ -92,7 +92,7 @@ function renderVolumeChart(all_stations){
    	 .on('mouseout', function(){
     
    				 d3.select(this).style("fill", "black")
-   				 d3.selectAll(".station").style("fill", "green");
+   				 d3.selectAll(".station").style("fill", "#3db7e4");
    				 d3.select("#clicked_station").style("fill", "red");
    			   });
    	 

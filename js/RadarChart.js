@@ -13,8 +13,8 @@ var RadarChart =
   draw: function(id, d, options){
   var cfg = {
 	 radius: 5,
-	 w: 600,
-	 h: 600,
+	 w: 500,
+	 h: 500,
 	 factor: 1,
 	 factorLegend: .85,
 	 levels: 3,
@@ -122,14 +122,14 @@ var RadarChart =
 		.on('mouseover', function (d){
 			d3.selectAll(".station").filter(function(j){return d == j.name;}).style("fill", "yellow");
 			//ADDED TO HIGHLIGHT STATION ON MAP FROM RADAR
-			d3.select(this).style('font-weight','bold').style('font-size','14pt');
+			d3.select(this).style('font-weight','bold').style('font-size','12px');
 			d3.selectAll("text.legend").filter(function(j){return j != d;}).style('opacity','0.4');
 		})
 		.on('mouseout', function(){
 			d3.selectAll(".station").style("fill", "green");
 			d3.select("#clicked_station").style("fill", "red");
 			// UPDATE LEGEND TEXT STYLE
-			d3.selectAll("text.legend").style('font-weight','normal').style('font-size','11pt').style('opacity','1');
+			d3.selectAll("text.legend").style('font-weight','normal').style('font-size','11px').style('opacity','1');
 
 		});
  

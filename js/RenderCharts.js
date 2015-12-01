@@ -2,10 +2,9 @@ renderCharts = function(station_id,all_stations){
 	console.log("Charts_Render called;");
 	
 	var w = 700,
-	h = 475;
+	h = 465;
 
 	var colorscale = d3.scale.category10();
-
 	//Legend titles
 	var LegendOptions = ['Incoming trips','Outgoing trips'];
 	
@@ -115,7 +114,10 @@ var legend = svg.append("g")
 	  .attr("y", function(d, i){ return i * 20;})
 	  .attr("width", 10)
 	  .attr("height", 10)
-	  .style("fill", function(d, i){ return colorscale(i);})
+	  .style("fill", function(d, i){ 
+	  	console.log(i);
+	  	console.log(colorscale(i));
+	  	return colorscale(i);})
 	  ;
 	//Create text next to squares
 	legend.selectAll('text')

@@ -43,7 +43,8 @@ function renderStation(collection){
 	      		"<li># of outgoing trips during selected date range: "+d.outflow+" </li>"+
 	"</ul>";
 	document.getElementById("charttitle").innerHTML =
-	"<p style='margin-top: 10px; padding-top: 10px;'>Number of trips from "+d.name+" to other stations</p>";
+	"<p style='margin-top: 10px; padding-top: 10px;'>Number of trips from "+d.name+" to other stations</p>"+
+	"<p style='float: right;'><span style='color:#1f77b4'>Incoming Trips</span><span style='color:#ff7f0e; padding-left: 10px;'> Outgoing Trips</span><p>";
 	document.getElementById("volumeDistanceCharttitle").innerHTML  =
 	"<p style='margin-top: 10px; padding-top: 10px;'>Incoming vs. Outgoing trips for "+d.name+"</p>";
 			 		

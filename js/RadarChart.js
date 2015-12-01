@@ -13,8 +13,8 @@ var RadarChart =
   draw: function(id, d, options){
   var cfg = {
 	 radius: 5,
-	 w: 500,
-	 h: 500,
+	 w:450,
+	 h: 450,
 	 factor: 1,
 	 factorLegend: .85,
 	 levels: 3,
@@ -126,7 +126,7 @@ var RadarChart =
 			d3.selectAll("text.legend").filter(function(j){return j != d;}).style('opacity','0.4');
 		})
 		.on('mouseout', function(){
-			d3.selectAll(".station").style("fill", "green");
+			d3.selectAll(".station").style("fill", "#3db7e4");
 			d3.select("#clicked_station").style("fill", "red");
 			// UPDATE LEGEND TEXT STYLE
 			d3.selectAll("text.legend").style('font-weight','normal').style('font-size','11px').style('opacity','1');
@@ -235,7 +235,7 @@ var RadarChart =
 						.style("fill-opacity", cfg.opacityArea);
 					//ADDED TO HIGHLIGHT STATION ON MAP FROM RADAR
 					d3.select(this).style("fill", function(d){return d.color;}).style("fill-opacity", .9)
-					d3.selectAll(".station").style("fill", "green");
+					d3.selectAll(".station").style("fill", "#3db7e4");
 					d3.select("#clicked_station").style("fill", "red");
 					// UPDATE LEGEND TEXT STYLE
 					d3.selectAll("text.legend").style('font-weight','normal').style('font-size','11pt').style('opacity','1');

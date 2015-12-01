@@ -2,7 +2,7 @@ renderCharts = function(station_id,all_stations){
 	console.log("Charts_Render called;");
 	
 	var w = 700,
-	h = 700;
+	h = 500;
 
 	var colorscale = d3.scale.category10();
 

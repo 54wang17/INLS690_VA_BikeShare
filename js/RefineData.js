@@ -69,7 +69,6 @@ var submit_date_query = function () {
 				datatype: "JSON",
 	            success: function(return_obj, status, jqXHR){
 	            			console.log("Get Data");
-	            			console.log(return_obj);
 							renderStation(return_obj);
 						},
 				statusCode: {

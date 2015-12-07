@@ -79,16 +79,17 @@ function renderVolumeChart(all_stations){
    		  }
    	 }
    	
-    // var tool_tip = d3.tip()
-    //     .attr("class",'tool_tip')
-    //     .offset([30,20])
-    //     .html(function() {
-    //     var d = this.__data__;
-    //     var html = d[3];
-    //     console.log('tool_tip'+html);
-    //     return html;
-    //     });
-    // svg.call(tool_tip);
+    var tool_tip = d3.tip()
+        .attr("class",'tool_tip')
+        .offset([30,20])
+        .html(function(d) {
+          console.log(d);
+          var html = d[3];
+          console.log('tool_tip'+html);
+          return html;
+        });
+
+    svg.call(tool_tip);
    	var circles = svg.selectAll("circle").data(incomingOutgoing);
    	 
     
@@ -98,18 +99,21 @@ function renderVolumeChart(all_stations){
           	.attr("r", 5)
  			      .attr("cx", function(d){return x(d[1])})
  			      .attr("cy", function(d){return y(d[2])})
-            .append("svg:title")
-            .text(function(d){return d[3];})
+            // .append("svg:title")
+            // .text(function(d){return d[3];})
  			      .on('mouseover', function (d){
        				d3.select(this).style("fill","yellow");
+              tool_tip.show(d);
        				var highlight_station = d3.selectAll(".station").filter(function(j){return parseInt(d[0]) == j.station_id;})
               highlight_station.style("fill", "yellow");
-               // tool_tip.show;
+              console.log('IN mouseover');
+              
  			      })
  	          .on('mouseout', function(){
      				  d3.select(this).style("fill", "black")
      				  d3.selectAll(".station").style("fill", "#3db7e4");
      				  d3.select("#clicked_station").style("fill", "red");
+              tool_tip.hide(d);
      			  });
  	 
  	  var justFlows = incomingOutgoing.map(function(d){return [d[1],d[2]]});   	 
